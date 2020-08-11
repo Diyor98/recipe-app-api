@@ -60,3 +60,19 @@ class PrivateIngredientsApiTests(TestCase):
         self.assertEqual(res.status_code,status.HTTP_200_OK)
         self.assertEquals(len(res.data),1)
         self.assertEquals(res.data[0]['name'],ingredient.name)
+
+
+    def test_create_ingredient_successful(self):
+        payload = {'name' : 'Cabbage'}
+        self.client.post(INGREDIENTS_URL, payload)
+
+        exists = Ingredient.objects.filter(user = self.user,
+                                            name = payload['name'],).exists()
+
+        self.assertTrue(exists)
+
+    def test_create_ingredient_invalid(self):
+        payload = {'name' : ''}
+        rec = self.client.post(INGREDIENTS_URL,payload)
+
+        self.assertEquals(rec.status_code, status.HTTP_400_BAD_REQUEST)
